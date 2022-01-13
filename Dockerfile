@@ -126,9 +126,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   libavfilter-dev \
   libspeexdsp-dev \
   libsamplerate0-dev \
-  bash-completion
-  
-  
+  bash-completion \
+  octave && apt-get clean
   
 
 RUN groupadd -g 1000 -r $USER
@@ -245,13 +244,15 @@ ARG gr_aprs_git=https://github.com/Arribas/gr-APRS.git
 RUN cd /home/$USER/sdr/ && git clone ${gr_aprs_git} gr-aprs && cd gr-aprs && git checkout gr3.8 && sudo cp Module/packet.py /usr/local/lib/python3/dist-packages/
 
 #make gqrx happy
-RUN sudo service dbus start \
-&& sudo service avahi-daemon start
+#RUN sudo service dbus start \
+#&& sudo service avahi-daemon start
 
 #export some shell paths
 RUN echo "export PYTHONPATH=/usr/lib/python3/dist-packages:/usr/lib/python3/site-packages:/usr/local/lib/python3/dist-packages:/home/$USER/.local/lib/python3.8/site-packages" >> /home/$USER/.bashrc \
 && echo "export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH" >> /home/$USER/.bashrc \
-&& echo "export PATH=/home/$USER/.local/bin:$PATH" >> /home/$USER/.bashrc
+&& echo "export PATH=/home/$USER/.local/bin:$PATH" >> /home/$USER/.bashrc \
+&& echo "sudo service dbus start" >> /home/$USER/.bashrc \
+&& echo "sudo service avahi-daemon start" >>/home/$USER/.bashrc
 
 
 ENTRYPOINT ["/bin/bash"]
